@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC2 v2.0 — Product Content Creator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#0f172a'},ok:{50:'#f0fdf4',100:'#dcfce7',500:'#22c55e',600:'#16a34a',700:'#15803d'},warn:{50:'#fffbeb',100:'#fef3c7',500:'#f59e0b',600:'#d97706'},err:{50:'#fef2f2',100:'#fee2e2',500:'#ef4444',600:'#dc2626'},pur:{50:'#faf5ff',100:'#f3e8ff',500:'#a855f7',600:'#9333ea'}}}}}</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*{font-family:'Inter',system-ui,sans-serif;scrollbar-width:thin}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+.screen.hidden{display:none !important}.screen.active{display:block !important}
+.sidebar-link{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:13px;color:#64748b;cursor:pointer;transition:all .15s}
+.sidebar-link:hover{background:#f1f5f9;color:#334155}
+.sidebar-link.active{background:#eff6ff;color:#1d4ed8;font-weight:600}
+.sidebar-link .icon{width:18px;height:18px;flex-shrink:0}
+.stage-btn.active{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+.stage-btn.done{border-color:#16a34a;background:#f0fdf4;color:#15803d}
+.tab-btn.active{border-bottom:2px solid #2563eb;color:#1d4ed8;font-weight:600}
+.field-row:hover{background:#f8fafc}
+.field-row .edit-btn{opacity:0}.field-row:hover .edit-btn{opacity:1}
+.fade-in{animation:fadeIn .25s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.pulse-dot{animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.toast-anim{animation:toastIn .3s ease-out,toastOut .3s ease-in 2.7s forwards}
+@keyframes toastIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes toastOut{from{opacity:1}to{opacity:0}}
+@media(max-width:768px){.sidebar{display:none}.sidebar.mobile-open{display:flex;position:fixed;inset:0;z-index:100;width:260px;box-shadow:4px 0 24px rgba(0,0,0,.15)}}
+.check-row:hover{background:#f0fdf4}
+.config-card{border:1px solid #e2e8f0;border-radius:12px;padding:16px;background:#fff}
+.config-card:hover{border-color:#cbd5e1;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- ============================================================ -->
+<!-- SCREEN: LOGIN -->
+<!-- ============================================================ -->
+<div id="loginScreen" class="screen hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900">
+  <div class="w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center border border-white/20">
+          <span class="text-white font-extrabold text-lg">PC2</span>
+        </div>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Product Content Creator</h1>
+      <p class="text-sm text-blue-200 mt-1">Iksula Enterprise Platform v2.0</p>
+    </div>
+    <!-- Login Card -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-6">Sign in to your account</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Email address</label>
+          <input type="email" placeholder="you@company.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none" value="admin@iksula.com">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Password</label>
+          <div class="relative">
+            <input type="password" placeholder="Enter password" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none" value="password123">
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-brand-600" checked><span class="text-xs text-gray-600">Remember me</span></label>
+          <button class="text-xs text-brand-600 hover:underline font-medium" onclick="showScreen('forgotScreen')">Forgot password?</button>
+        </div>
+        <button class="w-full py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700 transition mt-2" onclick="showScreen('appShell');initApp()">Sign In</button>
+      </div>
+      <div class="mt-6 pt-6 border-t border-gray-100 text-center">
+        <p class="text-[11px] text-gray-400">Enterprise SSO available — <button class="text-brand-600 font-medium hover:underline">Sign in with SAML</button></p>
+      </div>
+    </div>
+    <p class="text-center text-[11px] text-blue-300/60 mt-6">&copy; 2026 Iksula Services Pvt Ltd. All rights reserved.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: FORGOT PASSWORD -->
+<!-- ============================================================ -->
+<div id="forgotScreen" class="screen hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900">
+  <div class="w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <button class="text-xs text-gray-500 hover:text-gray-700 mb-4 flex items-center gap-1" onclick="showScreen('loginScreen')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Back to login</button>
+      <h2 class="text-lg font-semibold text-gray-900 mb-2">Reset your password</h2>
+      <p class="text-sm text-gray-500 mb-6">Enter your email and we'll send a reset link.</p>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Email address</label>
+          <input type="email" placeholder="you@company.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none">
+        </div>
+        <button class="w-full py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700 transition" onclick="showScreen('resetSentScreen')">Send Reset Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: RESET SENT CONFIRMATION -->
+<div id="resetSentScreen" class="screen hidden min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900">
+  <div class="w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 text-center">
+      <div class="w-16 h-16 mx-auto bg-ok-100 rounded-2xl flex items-center justify-center mb-4"><svg class="w-8 h-8 text-ok-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+      <h2 class="text-lg font-semibold text-gray-900 mb-2">Check your email</h2>
+      <p class="text-sm text-gray-500 mb-6">We've sent a password reset link to your email address.</p>
+      <button class="text-sm text-brand-600 font-medium hover:underline" onclick="showScreen('loginScreen')">Back to login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: MAIN APP SHELL (sidebar + content) -->
+<!-- ============================================================ -->
+<div id="appShell" class="screen active">
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar w-[240px] bg-white border-r border-gray-200 flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+    <!-- Logo -->
+    <div class="p-4 border-b border-gray-100">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-brand-700 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-xs">PC2</span></div>
+        <div><p class="text-sm font-semibold text-gray-900 leading-tight">Product Content</p><p class="text-[10px] text-gray-400">Creator v2.0</p></div>
+      </div>
+    </div>
+    <!-- Client selector -->
+    <div class="px-3 py-3 border-b border-gray-100">
+      <label class="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Client</label>
+      <select class="w-full mt-1 text-xs font-medium bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none cursor-pointer text-gray-800">
+        <option>SiteOne Landscape Supply</option>
+        <option>The Home Depot (THD)</option>
+      </select>
+    </div>
+    <!-- Nav links -->
+    <nav class="flex-1 p-3 space-y-1">
+      <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider px-3 mb-2">Main</p>
+      <div class="sidebar-link active" onclick="navigateTo('dashboard')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        Dashboard
+      </div>
+      <div class="sidebar-link" onclick="navigateTo('bulkUpload')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        Bulk Upload
+        <span class="ml-auto px-1.5 py-0.5 bg-brand-100 text-brand-700 text-[10px] font-bold rounded-full">3</span>
+      </div>
+      <div class="sidebar-link" onclick="navigateTo('itemPipeline')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Item Pipeline
+      </div>
+      <div class="sidebar-link" onclick="navigateTo('hilReview')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        HIL Review Queue
+        <span class="ml-auto px-1.5 py-0.5 bg-warn-100 text-warn-600 text-[10px] font-bold rounded-full">24</span>
+      </div>
+      <div class="sidebar-link" onclick="navigateTo('published')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+        Published Records
+      </div>
+
+      <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider px-3 mb-2 mt-6">Admin</p>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminUsers')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+        User Management
+      </div>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminConfidence')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        Confidence Config
+      </div>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminModels')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Model Registry
+      </div>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminTemplates')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/></svg>
+        Templates
+      </div>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminPipeline')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Pipeline Config
+      </div>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminAudit')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        Audit Logs
+      </div>
+      <div class="sidebar-link admin-el" onclick="navigateTo('adminDQ')">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Data Quality (DQ)
+      </div>
+    </nav>
+    <!-- User footer -->
+    <div class="p-3 border-t border-gray-100">
+      <div class="flex items-center gap-2.5 px-2 py-2">
+        <div class="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center"><span class="text-xs font-semibold text-brand-700">AK</span></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-medium text-gray-900 truncate">Abhishek K.</p>
+          <p class="text-[10px] text-gray-400">Admin</p>
+        </div>
+        <button class="text-gray-400 hover:text-gray-600" onclick="showScreen('loginScreen')" title="Sign out">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="flex-1 flex flex-col min-h-screen">
+    <!-- Top bar (mobile) -->
+    <div class="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+      <button onclick="document.querySelector('.sidebar').classList.toggle('mobile-open')"><svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <span class="text-sm font-semibold text-gray-900">PC2</span>
+      <div class="w-7 h-7 bg-brand-100 rounded-full flex items-center justify-center"><span class="text-[10px] font-semibold text-brand-700">AK</span></div>
+    </div>
+
+    <main class="flex-1 overflow-y-auto">
+
+<!-- ============================== -->
+<!-- PAGE: DASHBOARD -->
+<!-- ============================== -->
+<div id="pg-dashboard" class="page fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div><h2 class="text-xl font-bold text-gray-900">Dashboard</h2><p class="text-sm text-gray-500">Overview of your product content pipeline</p></div>
+    <div class="flex gap-2">
+      <button class="px-3 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg hover:bg-brand-700" onclick="navigateTo('bulkUpload')">+ Upload Batch</button>
+    </div>
+  </div>
+  <!-- Stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+    <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="text-2xl font-bold text-gray-900">564</p><p class="text-xs text-gray-500 mt-1">Total Records</p></div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="text-2xl font-bold text-brand-600">142</p><p class="text-xs text-gray-500 mt-1">In Pipeline</p></div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="text-2xl font-bold text-warn-600">24</p><p class="text-xs text-gray-500 mt-1">Awaiting Review</p></div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="text-2xl font-bold text-ok-600">389</p><p class="text-xs text-gray-500 mt-1">Published</p></div>
+    <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="text-2xl font-bold text-err-600">9</p><p class="text-xs text-gray-500 mt-1">Failed / Blocked</p></div>
+  </div>
+  <!-- Recent batches + Review queue side by side -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl border border-gray-200">
+      <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center"><h3 class="text-sm font-semibold text-gray-900">Recent Batches</h3><button class="text-xs text-brand-600 font-medium hover:underline" onclick="navigateTo('bulkUpload')">View all</button></div>
+      <div class="divide-y divide-gray-50">
+        <div class="px-4 py-3 flex items-center gap-3"><div class="w-8 h-8 bg-brand-50 rounded-lg flex items-center justify-center"><span class="text-brand-600 text-[10px] font-bold">CSV</span></div><div class="flex-1 min-w-0"><p class="text-xs font-medium text-gray-900 truncate">Orbit_Q1_2026_Catalog.csv</p><p class="text-[10px] text-gray-400">142 items · Uploaded 2h ago</p></div><span class="px-2 py-0.5 bg-brand-100 text-brand-700 text-[10px] font-medium rounded">23%</span></div>
+        <div class="px-4 py-3 flex items-center gap-3"><div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center"><span class="text-red-500 text-[10px] font-bold">PDF</span></div><div class="flex-1 min-w-0"><p class="text-xs font-medium text-gray-900 truncate">RainBird_Mar_Products.pdf</p><p class="text-[10px] text-gray-400">28 items · Uploaded 5h ago</p></div><span class="px-2 py-0.5 bg-ok-100 text-ok-700 text-[10px] font-medium rounded">Done</span></div>
+        <div class="px-4 py-3 flex items-center gap-3"><div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center"><span class="text-green-600 text-[10px] font-bold">XLS</span></div><div class="flex-1 min-w-0"><p class="text-xs font-medium text-gray-900 truncate">Hunter_Sensors_Update.xlsx</p><p class="text-[10px] text-gray-400">56 items · Uploaded 1d ago</p></div><span class="px-2 py-0.5 bg-ok-100 text-ok-700 text-[10px] font-medium rounded">Done</span></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200">
+      <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center"><h3 class="text-sm font-semibold text-gray-900">Review Queue (Top Priority)</h3><button class="text-xs text-brand-600 font-medium hover:underline" onclick="navigateTo('hilReview')">View all 24</button></div>
+      <div class="divide-y divide-gray-50">
+        <div class="px-4 py-3 flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-pur-500 flex-shrink-0"></span><div class="flex-1"><p class="text-xs font-medium text-gray-900">Shipping Weight — Orbit B-0624W</p><p class="text-[10px] text-gray-400">Validation fail · Stage 5</p></div><span class="text-[10px] text-pur-600 font-medium">Must fix</span></div>
+        <div class="px-4 py-3 flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-err-500 flex-shrink-0"></span><div class="flex-1"><p class="text-xs font-medium text-gray-900">UPC Code — RainBird ESP-TM2</p><p class="text-[10px] text-gray-400">Low confidence 42% · Stage 1</p></div><span class="text-[10px] text-err-600 font-medium">Low conf</span></div>
+        <div class="px-4 py-3 flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-warn-500 flex-shrink-0"></span><div class="flex-1"><p class="text-xs font-medium text-gray-900">Material — Hunter PGP Ultra</p><p class="text-[10px] text-gray-400">Needs review 68% · Stage 4</p></div><span class="text-[10px] text-warn-600 font-medium">Review</span></div>
+        <div class="px-4 py-3 flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-warn-500 flex-shrink-0"></span><div class="flex-1"><p class="text-xs font-medium text-gray-900">Category — Toro DL2000</p><p class="text-[10px] text-gray-400">Needs review 71% · Stage 2</p></div><span class="text-[10px] text-warn-600 font-medium">Review</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- PAGE: BULK UPLOAD -->
+<!-- ============================== -->
+<div id="pg-bulkUpload" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div><h2 class="text-xl font-bold text-gray-900">Bulk Upload</h2><p class="text-sm text-gray-500">Upload supplier batches for processing</p></div>
+  </div>
+  <!-- Upload Zone -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+    <div class="border-2 border-dashed border-brand-300 bg-brand-50/50 rounded-xl p-10 text-center hover:border-brand-400 transition cursor-pointer">
+      <div class="w-16 h-16 mx-auto bg-brand-100 rounded-2xl flex items-center justify-center mb-4"><svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg></div>
+      <p class="text-sm font-medium text-gray-700">Drag &amp; drop files here to upload</p>
+      <p class="text-xs text-gray-400 mt-1">PDF, CSV, XLSX, Images — Multiple files supported — Max 50MB each</p>
+      <button class="mt-4 px-6 py-2 bg-brand-600 text-white text-sm font-medium rounded-lg hover:bg-brand-700">Browse Files</button>
+    </div>
+    <!-- Upload options -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+      <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+        <div><p class="text-xs font-medium text-gray-700">Web Lookup</p><p class="text-[10px] text-gray-400">Search by product name / model</p></div>
+      </div>
+      <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <div><p class="text-xs font-medium text-gray-700">API Feed</p><p class="text-[10px] text-gray-400">Connect supplier data feed</p></div>
+      </div>
+      <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        <div><p class="text-xs font-medium text-gray-700">FTP / SFTP</p><p class="text-[10px] text-gray-400">Scheduled file drop monitor</p></div>
+      </div>
+    </div>
+  </div>
+  <!-- Batch Queue -->
+  <div class="bg-white rounded-xl border border-gray-200">
+    <div class="px-4 py-3 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
+      <h3 class="text-sm font-semibold text-gray-900">Batch Queue</h3>
+      <div class="flex gap-2">
+        <select class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 outline-none"><option>All statuses</option><option>Processing</option><option>Queued</option><option>Complete</option><option>Failed</option></select>
+        <input type="text" placeholder="Search batches..." class="text-xs border border-gray-200 rounded-lg px-3 py-1 outline-none w-40">
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead class="bg-gray-50"><tr>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300"></th>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500">File</th>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden md:table-cell">Supplier</th>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500">Items</th>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500">Status</th>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden lg:table-cell">Progress</th>
+          <th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden md:table-cell">Uploaded</th>
+          <th class="text-right px-4 py-2.5 font-medium text-gray-500">Actions</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-50">
+          <tr class="hover:bg-gray-50"><td class="px-4 py-3"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300"></td><td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-7 h-7 bg-brand-50 rounded flex items-center justify-center text-[9px] font-bold text-brand-600">CSV</span><span class="font-medium">Orbit_Q1_2026_Catalog.csv</span></div></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">Orbit Irrigation</td><td class="px-4 py-3">142</td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-100 text-brand-700 rounded font-medium">Processing</span></td><td class="px-4 py-3 hidden lg:table-cell"><div class="flex items-center gap-2"><div class="w-20 bg-gray-200 rounded-full h-1.5"><div class="bg-brand-500 h-1.5 rounded-full" style="width:23%"></div></div><span class="text-gray-500">23%</span></div></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">2h ago</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">View</button></td></tr>
+          <tr class="hover:bg-gray-50"><td class="px-4 py-3"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300"></td><td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-7 h-7 bg-red-50 rounded flex items-center justify-center text-[9px] font-bold text-red-500">PDF</span><span class="font-medium">RainBird_NewProducts_Mar.pdf</span></div></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">Rain Bird</td><td class="px-4 py-3">28</td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-medium">Queued</span></td><td class="px-4 py-3 hidden lg:table-cell"><span class="text-gray-400">—</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">5h ago</td><td class="px-4 py-3 text-right"><button class="text-gray-500 hover:text-gray-700">Cancel</button></td></tr>
+          <tr class="hover:bg-gray-50"><td class="px-4 py-3"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300"></td><td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-7 h-7 bg-green-50 rounded flex items-center justify-center text-[9px] font-bold text-green-600">XLS</span><span class="font-medium">Hunter_Sensors_Update.xlsx</span></div></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">Hunter Industries</td><td class="px-4 py-3">56</td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-ok-100 text-ok-700 rounded font-medium">Complete</span></td><td class="px-4 py-3 hidden lg:table-cell"><div class="flex items-center gap-2"><div class="w-20 bg-gray-200 rounded-full h-1.5"><div class="bg-ok-500 h-1.5 rounded-full" style="width:100%"></div></div><span class="text-ok-600">100%</span></div></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">1d ago</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline" onclick="navigateTo('hilReview')">Review</button></td></tr>
+          <tr class="hover:bg-gray-50"><td class="px-4 py-3"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300"></td><td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-7 h-7 bg-red-50 rounded flex items-center justify-center text-[9px] font-bold text-red-500">PDF</span><span class="font-medium">FXLuminaire_LED_Specs.pdf</span></div></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">FX Luminaire</td><td class="px-4 py-3">34</td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-err-100 text-err-600 rounded font-medium">Failed</span></td><td class="px-4 py-3 hidden lg:table-cell"><span class="text-err-500 text-[10px]">Parse error — unsupported format</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">2d ago</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">Retry</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Bulk actions bar -->
+    <div class="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center gap-3 rounded-b-xl">
+      <span class="text-[10px] text-gray-500">0 selected</span>
+      <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium text-gray-600 rounded hover:bg-gray-100">Retry Selected</button>
+      <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium text-gray-600 rounded hover:bg-gray-100">Cancel Selected</button>
+      <button class="px-2.5 py-1 bg-white border border-err-200 text-[10px] font-medium text-err-600 rounded hover:bg-err-50">Delete Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- PAGE: BULK HIL REVIEW -->
+<!-- ============================== -->
+<div id="pg-hilReview" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div><h2 class="text-xl font-bold text-gray-900">HIL Review Queue</h2><p class="text-sm text-gray-500">24 items across all products and stages</p></div>
+    <div class="flex gap-2">
+      <button class="px-3 py-2 bg-ok-600 text-white text-xs font-semibold rounded-lg hover:bg-ok-700">Approve All High-Confidence</button>
+    </div>
+  </div>
+  <!-- Filters -->
+  <div class="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+    <div class="flex flex-wrap gap-3">
+      <div><label class="text-[10px] text-gray-400 font-medium block mb-1">Priority</label>
+        <select class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none"><option>All priorities</option><option>Must fix (validation fail)</option><option>Low confidence (&lt;60)</option><option>Needs review (60-84)</option></select>
+      </div>
+      <div><label class="text-[10px] text-gray-400 font-medium block mb-1">Stage</label>
+        <select class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none"><option>All stages</option><option>1 — Ingestion</option><option>2 — Categorisation</option><option>3 — Deduplication</option><option>4 — Enrichment</option><option>5 — Validation</option><option>6 — Transform</option><option>7 — Final Review</option></select>
+      </div>
+      <div><label class="text-[10px] text-gray-400 font-medium block mb-1">Confidence Range</label>
+        <div class="flex items-center gap-1"><input type="number" value="0" class="w-14 text-xs border border-gray-200 rounded px-2 py-1.5 outline-none"><span class="text-gray-400">—</span><input type="number" value="84" class="w-14 text-xs border border-gray-200 rounded px-2 py-1.5 outline-none"></div>
+      </div>
+      <div><label class="text-[10px] text-gray-400 font-medium block mb-1">Batch</label>
+        <select class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none"><option>All batches</option><option>Orbit_Q1_2026_Catalog.csv</option><option>RainBird_Mar_Products.pdf</option><option>Hunter_Sensors_Update.xlsx</option></select>
+      </div>
+      <div><label class="text-[10px] text-gray-400 font-medium block mb-1">Product</label>
+        <input type="text" placeholder="Search product..." class="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none w-36">
+      </div>
+      <div class="flex items-end"><button class="px-3 py-1.5 bg-brand-600 text-white text-xs font-medium rounded-lg">Apply Filters</button></div>
+    </div>
+  </div>
+  <!-- Summary -->
+  <div class="grid grid-cols-4 gap-3 mb-4">
+    <div class="bg-pur-50 border border-pur-200 rounded-lg p-3 text-center"><span class="text-lg font-bold text-pur-600">3</span><p class="text-[10px] text-pur-500">Must Fix</p></div>
+    <div class="bg-err-50 border border-err-200 rounded-lg p-3 text-center"><span class="text-lg font-bold text-err-600">5</span><p class="text-[10px] text-err-500">Low Confidence</p></div>
+    <div class="bg-warn-50 border border-warn-200 rounded-lg p-3 text-center"><span class="text-lg font-bold text-warn-600">16</span><p class="text-[10px] text-warn-500">Needs Review</p></div>
+    <div class="bg-ok-50 border border-ok-200 rounded-lg p-3 text-center"><span class="text-lg font-bold text-ok-600">389</span><p class="text-[10px] text-ok-500">Auto-Approved</p></div>
+  </div>
+  <!-- Review Items -->
+  <div class="bg-white rounded-xl border border-gray-200">
+    <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+      <div class="flex items-center gap-3"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300"><span class="text-xs text-gray-500">Select all</span></div>
+      <div class="flex gap-2"><button class="px-2.5 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded hover:bg-ok-100">Approve Selected</button><button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium text-gray-600 rounded hover:bg-gray-50">Reject Selected</button></div>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <!-- Must fix -->
+      <div class="px-4 py-4 border-l-4 border-pur-400 bg-pur-50/30 flex flex-col lg:flex-row lg:items-center gap-3">
+        <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 flex-shrink-0 mt-1 lg:mt-0">
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2"><span class="px-1.5 py-0.5 bg-pur-100 text-pur-700 text-[10px] font-bold rounded">MUST FIX</span><span class="text-xs font-semibold text-gray-900">Shipping Weight</span><span class="text-[10px] text-gray-400">· Orbit B-0624W · Stage 5</span></div>
+          <p class="text-[10px] text-gray-500 mt-1">Mandatory field missing — validation failure</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" placeholder="Enter value" class="px-2 py-1.5 border border-pur-200 rounded text-xs w-24 outline-none">
+          <button class="px-3 py-1.5 bg-brand-600 text-white text-[10px] font-medium rounded-lg hover:bg-brand-700 whitespace-nowrap">Save</button>
+        </div>
+      </div>
+      <div class="px-4 py-4 border-l-4 border-pur-400 bg-pur-50/30 flex flex-col lg:flex-row lg:items-center gap-3">
+        <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 flex-shrink-0 mt-1 lg:mt-0">
+        <div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="px-1.5 py-0.5 bg-pur-100 text-pur-700 text-[10px] font-bold rounded">MUST FIX</span><span class="text-xs font-semibold text-gray-900">UPC Code</span><span class="text-[10px] text-gray-400">· RainBird ESP-TM2 · Stage 5</span></div><p class="text-[10px] text-gray-500 mt-1">Format invalid — must be 12 digits</p></div>
+        <div class="flex items-center gap-2"><input type="text" value="01234567890" class="px-2 py-1.5 border border-err-200 rounded text-xs w-28 outline-none"><button class="px-3 py-1.5 bg-brand-600 text-white text-[10px] font-medium rounded-lg">Save</button></div>
+      </div>
+      <!-- Low confidence -->
+      <div class="px-4 py-4 border-l-4 border-err-300 flex flex-col lg:flex-row lg:items-center gap-3">
+        <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 flex-shrink-0 mt-1 lg:mt-0">
+        <div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="w-2 h-2 rounded-full bg-err-500"></span><span class="text-xs font-semibold text-gray-900">Material</span><span class="text-xs text-gray-600">Polycarbonate</span><span class="px-1.5 py-0.5 bg-err-50 text-err-600 text-[10px] font-medium rounded">42%</span><span class="text-[10px] text-gray-400">· Hunter PGP Ultra · Stage 4</span></div></div>
+        <div class="flex items-center gap-2">
+          <button class="px-2.5 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded hover:bg-ok-100">Approve</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Edit</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Reject</button>
+          <button class="text-[10px] text-brand-600 font-medium hover:underline" onclick="navigateTo('itemPipeline')">Open item →</button>
+        </div>
+      </div>
+      <!-- Needs review -->
+      <div class="px-4 py-4 border-l-4 border-warn-300 flex flex-col lg:flex-row lg:items-center gap-3">
+        <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 flex-shrink-0 mt-1 lg:mt-0">
+        <div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="w-2 h-2 rounded-full bg-warn-500"></span><span class="text-xs font-semibold text-gray-900">Colour</span><span class="text-xs text-gray-600">Grey</span><span class="px-1.5 py-0.5 bg-warn-50 text-warn-600 text-[10px] font-medium rounded">72%</span><span class="text-[10px] text-gray-400">· Orbit B-0624W · Stage 4</span></div></div>
+        <div class="flex items-center gap-2">
+          <button class="px-2.5 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded hover:bg-ok-100">Approve</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Edit</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Reject</button>
+          <button class="text-[10px] text-brand-600 font-medium hover:underline" onclick="navigateTo('itemPipeline')">Open item →</button>
+        </div>
+      </div>
+      <div class="px-4 py-4 border-l-4 border-warn-300 flex flex-col lg:flex-row lg:items-center gap-3">
+        <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 flex-shrink-0 mt-1 lg:mt-0">
+        <div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="w-2 h-2 rounded-full bg-warn-500"></span><span class="text-xs font-semibold text-gray-900">Compatible Valves</span><span class="text-xs text-gray-600">24VAC solenoid</span><span class="px-1.5 py-0.5 bg-warn-50 text-warn-600 text-[10px] font-medium rounded">68%</span><span class="text-[10px] text-gray-400">· Orbit B-0624W · Stage 4</span></div></div>
+        <div class="flex items-center gap-2">
+          <button class="px-2.5 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded hover:bg-ok-100">Approve</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Edit</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Reject</button>
+        </div>
+      </div>
+      <div class="px-4 py-4 border-l-4 border-warn-300 flex flex-col lg:flex-row lg:items-center gap-3">
+        <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 flex-shrink-0 mt-1 lg:mt-0">
+        <div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="w-2 h-2 rounded-full bg-warn-500"></span><span class="text-xs font-semibold text-gray-900">App Name</span><span class="text-xs text-gray-600">Orbit B-hyve</span><span class="px-1.5 py-0.5 bg-warn-50 text-warn-600 text-[10px] font-medium rounded">61%</span><span class="text-[10px] text-gray-400">· Orbit B-0624W · Stage 4</span></div></div>
+        <div class="flex items-center gap-2">
+          <button class="px-2.5 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded hover:bg-ok-100">Approve</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Edit</button>
+          <button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] font-medium rounded hover:bg-gray-50">Reject</button>
+        </div>
+      </div>
+    </div>
+    <!-- Pagination -->
+    <div class="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+      <span class="text-[10px] text-gray-500">Showing 1–6 of 24 items</span>
+      <div class="flex gap-1"><button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] rounded hover:bg-gray-50">Prev</button><button class="px-2.5 py-1 bg-brand-600 text-white text-[10px] rounded">1</button><button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] rounded hover:bg-gray-50">2</button><button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] rounded hover:bg-gray-50">3</button><button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] rounded hover:bg-gray-50">4</button><button class="px-2.5 py-1 bg-white border border-gray-200 text-[10px] rounded hover:bg-gray-50">Next</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- PAGE: ITEM PIPELINE (placeholder — links to original 7-stage view) -->
+<!-- ============================== -->
+<div id="pg-itemPipeline" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="mb-4"><button class="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1" onclick="navigateTo('hilReview')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Back to Review Queue</button></div>
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+    <div><h2 class="text-lg font-bold text-gray-900">Orbit 24V 6-Zone Smart Irrigation Controller</h2><p class="text-xs text-gray-500">Model B-0624W · Orbit Irrigation Products · Batch: Orbit_Q1_2026_Catalog.csv</p></div>
+    <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-brand-600" id="techToggle2" onchange="document.querySelectorAll('.tech-detail').forEach(e=>this.checked?e.classList.remove('hidden'):e.classList.add('hidden'))"><span class="text-[10px] text-gray-500">Technical details</span></label>
+  </div>
+  <!-- 7-Stage Stepper (inline) -->
+  <div class="flex items-center gap-1 mb-6 overflow-x-auto pb-2" id="itemStepper">
+    <button onclick="showItemStage(1)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-brand-500 bg-brand-50 text-xs font-medium text-brand-700 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>Ingestion</button>
+    <svg class="w-3 h-3 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <button onclick="showItemStage(2)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-ok-400 bg-ok-50 text-xs font-medium text-ok-700 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-ok-600 text-white flex items-center justify-center text-[10px]">&#10003;</span>Categorisation</button>
+    <svg class="w-3 h-3 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <button onclick="showItemStage(3)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-ok-400 bg-ok-50 text-xs font-medium text-ok-700 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-ok-600 text-white flex items-center justify-center text-[10px]">&#10003;</span>Dedup</button>
+    <svg class="w-3 h-3 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <button onclick="showItemStage(4)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-warn-400 bg-warn-50 text-xs font-medium text-warn-700 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-warn-500 text-white flex items-center justify-center text-[10px] font-bold">!</span>Enrichment <span class="text-[9px] bg-warn-100 px-1 rounded">1</span></button>
+    <svg class="w-3 h-3 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <button onclick="showItemStage(5)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-err-300 bg-err-50 text-xs font-medium text-err-700 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-err-500 text-white flex items-center justify-center text-[10px] font-bold">!</span>Validation <span class="text-[9px] bg-err-100 px-1 rounded">1</span></button>
+    <svg class="w-3 h-3 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <button onclick="showItemStage(6)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-gray-200 text-xs font-medium text-gray-500 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[10px] font-bold">6</span>Transform</button>
+    <svg class="w-3 h-3 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <button onclick="showItemStage(7)" class="stg-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-gray-200 text-xs font-medium text-gray-500 whitespace-nowrap"><span class="w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[10px] font-bold">7</span>Publish</button>
+  </div>
+  <!-- Inline stage content area (abbreviated — shows Stage 4 Enrichment as example) -->
+  <div class="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+    <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-gray-900">Stage 4 — Enrichment</h3><span class="tech-detail hidden text-[10px] text-gray-400">Iksula KB v3.1 · GPT-4o · Vision v1.2</span></div>
+    <div class="mb-4 bg-ok-50 rounded-lg p-3 flex items-center gap-3"><div class="flex-1"><div class="flex items-center justify-between mb-1"><span class="text-xs font-medium text-gray-700">Completeness</span><span class="text-xs font-bold text-ok-700">44% → 93%</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-gradient-to-r from-warn-400 to-ok-500 h-2 rounded-full" style="width:93%"></div></div></div></div>
+    <!-- Web Scrape Panel -->
+    <div class="mb-4 border border-blue-200 rounded-lg overflow-hidden">
+      <div class="px-3 py-2.5 bg-blue-50 border-b border-blue-200 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+          <span class="text-xs font-semibold text-blue-800">Web Attribute Extraction</span>
+        </div>
+        <span class="text-[10px] text-blue-600">Searched: "Orbit B-0624W" · 5 sources scraped</span>
+      </div>
+      <!-- Google results -->
+      <div class="px-3 py-2 border-b border-gray-100">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Google Search — Top 3 URLs</p>
+        <div class="space-y-2">
+          <div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
+            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px] font-bold mt-0.5 flex-shrink-0">G1</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-blue-600 truncate hover:underline cursor-pointer">orbitonline.com/products/B-0624W</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Weight: 0.8 lbs</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Dims: 7×4.7×2.4 in</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">App: Orbit B-hyve</span>
+              </div>
+            </div>
+            <span class="text-[9px] text-gray-400 flex-shrink-0">3 attrs</span>
+          </div>
+          <div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
+            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px] font-bold mt-0.5 flex-shrink-0">G2</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-blue-600 truncate hover:underline cursor-pointer">irrigationdirect.com/orbit-b0624w</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Temp: 32–122°F</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Warranty: 24 mo</span>
+              </div>
+            </div>
+            <span class="text-[9px] text-gray-400 flex-shrink-0">2 attrs</span>
+          </div>
+          <div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
+            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[9px] font-bold mt-0.5 flex-shrink-0">G3</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-blue-600 truncate hover:underline cursor-pointer">homedepot.com/p/orbit-6-zone/309876</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Color: Grey</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Certs: CE, RoHS</span>
+              </div>
+            </div>
+            <span class="text-[9px] text-gray-400 flex-shrink-0">2 attrs</span>
+          </div>
+        </div>
+      </div>
+      <!-- Amazon results -->
+      <div class="px-3 py-2">
+        <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Amazon — Top Results</p>
+        <div class="space-y-2">
+          <div class="flex items-start gap-2 p-2 bg-orange-50/50 rounded-lg">
+            <span class="px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded text-[9px] font-bold mt-0.5 flex-shrink-0">A1</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-orange-700 truncate hover:underline cursor-pointer">amazon.com/dp/B09XYZ1234 — "Orbit 57946 B-hyve Smart 6-Zone..."</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Weight: 12.8 oz</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Zones: 6</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">24V</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Color: Gray</span>
+              </div>
+            </div>
+            <span class="text-[9px] text-gray-400 flex-shrink-0">4 attrs</span>
+          </div>
+          <div class="flex items-start gap-2 p-2 bg-orange-50/50 rounded-lg">
+            <span class="px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded text-[9px] font-bold mt-0.5 flex-shrink-0">A2</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] text-orange-700 truncate hover:underline cursor-pointer">amazon.com/dp/B09XYZ5678 — "Orbit B-hyve 6-Station Smart..."</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">Valves: 24VAC solenoid</span>
+                <span class="px-1.5 py-0.5 bg-ok-50 text-ok-700 rounded text-[9px]">App: B-hyve</span>
+              </div>
+            </div>
+            <span class="text-[9px] text-gray-400 flex-shrink-0">2 attrs</span>
+          </div>
+        </div>
+        <div class="mt-2 flex items-center gap-2">
+          <span class="text-[10px] text-gray-400">Showing 2 of 10 results</span>
+          <button class="text-[10px] text-brand-600 font-medium hover:underline">Show all 10</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enriched Fields (with web source badges) -->
+    <div class="divide-y divide-gray-50 border border-gray-100 rounded-lg">
+      <div class="field-row flex items-center gap-3 px-3 py-2.5">
+        <span class="w-5 h-5 rounded-full bg-ok-100 flex items-center justify-center"><svg class="w-3 h-3 text-ok-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></span>
+        <span class="text-xs text-gray-600 w-28">Material</span>
+        <span class="text-sm text-gray-900 flex-1">ABS Plastic</span>
+        <span class="px-1.5 py-0.5 bg-green-50 text-green-600 rounded text-[10px] font-medium">KB</span>
+        <span class="edit-btn text-[10px] text-brand-600 cursor-pointer">Edit</span>
+        <button class="px-2 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded">Approve</button>
+      </div>
+      <div class="field-row flex items-center gap-3 px-3 py-2.5 bg-warn-50/50">
+        <span class="w-5 h-5 rounded-full bg-warn-100 flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-warn-500"></span></span>
+        <span class="text-xs text-gray-600 w-28">Colour</span>
+        <span class="text-sm text-gray-900 flex-1">Grey</span>
+        <div class="flex gap-1"><span class="px-1.5 py-0.5 bg-purple-50 text-purple-600 rounded text-[9px] font-medium">Vision</span><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-medium">G3</span><span class="px-1.5 py-0.5 bg-orange-50 text-orange-600 rounded text-[9px] font-medium">A1</span></div>
+        <span class="text-[10px] text-ok-600">3 agree ↑</span>
+        <span class="edit-btn text-[10px] text-brand-600 cursor-pointer">Edit</span>
+        <button class="px-2 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded">Approve</button>
+      </div>
+      <div class="field-row flex items-center gap-3 px-3 py-2.5">
+        <span class="w-5 h-5 rounded-full bg-ok-100 flex items-center justify-center"><svg class="w-3 h-3 text-ok-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></span>
+        <span class="text-xs text-gray-600 w-28">Weight</span>
+        <span class="text-sm text-gray-900 flex-1">0.36 kg</span>
+        <div class="flex gap-1"><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-medium">G1</span><span class="px-1.5 py-0.5 bg-orange-50 text-orange-600 rounded text-[9px] font-medium">A1</span></div>
+        <span class="text-[10px] text-ok-600">2 agree ↑</span>
+        <span class="edit-btn text-[10px] text-brand-600 cursor-pointer">Edit</span>
+        <button class="px-2 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded">Approve</button>
+      </div>
+      <div class="field-row flex items-center gap-3 px-3 py-2.5">
+        <span class="w-5 h-5 rounded-full bg-ok-100 flex items-center justify-center"><svg class="w-3 h-3 text-ok-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></span>
+        <span class="text-xs text-gray-600 w-28">Certifications</span>
+        <span class="text-sm text-gray-900 flex-1">CE, RoHS</span>
+        <div class="flex gap-1"><span class="px-1.5 py-0.5 bg-green-50 text-green-600 rounded text-[9px] font-medium">KB</span><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-medium">G3</span></div>
+        <span class="text-[10px] text-ok-600">2 agree ↑</span>
+        <span class="edit-btn text-[10px] text-brand-600 cursor-pointer">Edit</span>
+        <button class="px-2 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded">Approve</button>
+      </div>
+      <div class="field-row flex items-center gap-3 px-3 py-2.5">
+        <span class="w-5 h-5 rounded-full bg-ok-100 flex items-center justify-center"><svg class="w-3 h-3 text-ok-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></span>
+        <span class="text-xs text-gray-600 w-28">App Name</span>
+        <span class="text-sm text-gray-900 flex-1">Orbit B-hyve</span>
+        <div class="flex gap-1"><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-medium">G1</span><span class="px-1.5 py-0.5 bg-orange-50 text-orange-600 rounded text-[9px] font-medium">A2</span></div>
+        <span class="text-[10px] text-ok-600">2 agree ↑</span>
+        <span class="edit-btn text-[10px] text-brand-600 cursor-pointer">Edit</span>
+        <button class="px-2 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded">Approve</button>
+      </div>
+      <div class="field-row flex items-center gap-3 px-3 py-2.5">
+        <span class="w-5 h-5 rounded-full bg-ok-100 flex items-center justify-center"><svg class="w-3 h-3 text-ok-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></span>
+        <span class="text-xs text-gray-600 w-28">Operating Temp</span>
+        <span class="text-sm text-gray-900 flex-1">0–50°C</span>
+        <div class="flex gap-1"><span class="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-medium">LLM</span><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-medium">G2</span></div>
+        <span class="text-[10px] text-ok-600">2 agree ↑</span>
+        <span class="edit-btn text-[10px] text-brand-600 cursor-pointer">Edit</span>
+        <button class="px-2 py-1 bg-ok-50 text-ok-700 text-[10px] font-medium rounded">Approve</button>
+      </div>
+    </div>
+  </div>
+  <!-- Bottom action bar -->
+  <div class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-3 text-[11px]"><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-warn-500"></span>1 needs review</span><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-ok-500"></span>7 auto-approved</span><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-err-500"></span>1 failure</span></div>
+    <div class="flex gap-2"><button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium rounded-lg">Review Flagged</button><button class="px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg hover:bg-brand-700">Approve All &amp; Continue →</button></div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- PAGE: PUBLISHED RECORDS -->
+<!-- ============================== -->
+<div id="pg-published" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">Published Records</h2><p class="text-sm text-gray-500">389 records published to SiteOne staging</p></div><button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium rounded-lg">Export All CSV</button></div>
+  <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+    <table class="w-full text-xs">
+      <thead class="bg-gray-50"><tr><th class="text-left px-4 py-2.5 font-medium text-gray-500">Product</th><th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden md:table-cell">Model</th><th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden lg:table-cell">Category</th><th class="text-left px-4 py-2.5 font-medium text-gray-500">Score</th><th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden md:table-cell">Published</th><th class="text-right px-4 py-2.5 font-medium text-gray-500">Actions</th></tr></thead>
+      <tbody class="divide-y divide-gray-50">
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium">Orbit 6-Zone Smart Controller</td><td class="px-4 py-3 hidden md:table-cell text-gray-500">B-0624W</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">Smart Controllers</td><td class="px-4 py-3"><span class="px-1.5 py-0.5 bg-ok-100 text-ok-700 rounded font-medium">93%</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">Mar 22, 2026</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline" onclick="navigateTo('itemPipeline')">View</button></td></tr>
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium">Hunter PGP Ultra Rotor</td><td class="px-4 py-3 hidden md:table-cell text-gray-500">PGP-U</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">Rotors</td><td class="px-4 py-3"><span class="px-1.5 py-0.5 bg-ok-100 text-ok-700 rounded font-medium">97%</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">Mar 21, 2026</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">View</button></td></tr>
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium">Rain Bird ESP-TM2 Controller</td><td class="px-4 py-3 hidden md:table-cell text-gray-500">ESP-TM2</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">Controllers</td><td class="px-4 py-3"><span class="px-1.5 py-0.5 bg-ok-100 text-ok-700 rounded font-medium">91%</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">Mar 20, 2026</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">View</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: USER MANAGEMENT -->
+<!-- ============================== -->
+<div id="pg-adminUsers" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">User Management</h2><p class="text-sm text-gray-500">Manage users, roles, and access</p></div><button class="px-3 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg hover:bg-brand-700">+ Invite User</button></div>
+  <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+    <table class="w-full text-xs">
+      <thead class="bg-gray-50"><tr><th class="text-left px-4 py-2.5 font-medium text-gray-500">User</th><th class="text-left px-4 py-2.5 font-medium text-gray-500">Role</th><th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden md:table-cell">Client</th><th class="text-left px-4 py-2.5 font-medium text-gray-500 hidden lg:table-cell">Last Active</th><th class="text-left px-4 py-2.5 font-medium text-gray-500">Status</th><th class="text-right px-4 py-2.5 font-medium text-gray-500">Actions</th></tr></thead>
+      <tbody class="divide-y divide-gray-50">
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 bg-brand-100 rounded-full flex items-center justify-center"><span class="text-[10px] font-bold text-brand-700">AK</span></div><div><p class="font-medium">Abhishek K.</p><p class="text-[10px] text-gray-400">admin@iksula.com</p></div></div></td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-100 text-brand-700 rounded font-medium">Admin</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">All</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">Just now</td><td class="px-4 py-3"><span class="w-2 h-2 rounded-full bg-ok-500 inline-block"></span> Active</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">Edit</button></td></tr>
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 bg-green-100 rounded-full flex items-center justify-center"><span class="text-[10px] font-bold text-green-700">SR</span></div><div><p class="font-medium">Sarah R.</p><p class="text-[10px] text-gray-400">sarah@iksula.com</p></div></div></td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-warn-100 text-warn-600 rounded font-medium">Reviewer</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">SiteOne</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">2h ago</td><td class="px-4 py-3"><span class="w-2 h-2 rounded-full bg-ok-500 inline-block"></span> Active</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">Edit</button></td></tr>
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center"><span class="text-[10px] font-bold text-purple-700">MJ</span></div><div><p class="font-medium">Mike J.</p><p class="text-[10px] text-gray-400">mike@siteone.com</p></div></div></td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-medium">Viewer</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">SiteOne</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">1d ago</td><td class="px-4 py-3"><span class="w-2 h-2 rounded-full bg-ok-500 inline-block"></span> Active</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">Edit</button></td></tr>
+        <tr class="hover:bg-gray-50"><td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-7 h-7 bg-red-100 rounded-full flex items-center justify-center"><span class="text-[10px] font-bold text-red-700">DL</span></div><div><p class="font-medium">David L.</p><p class="text-[10px] text-gray-400">david@homedepot.com</p></div></div></td><td class="px-4 py-3"><span class="px-2 py-0.5 bg-warn-100 text-warn-600 rounded font-medium">Reviewer</span></td><td class="px-4 py-3 hidden md:table-cell text-gray-500">THD</td><td class="px-4 py-3 hidden lg:table-cell text-gray-500">3d ago</td><td class="px-4 py-3"><span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span> Inactive</td><td class="px-4 py-3 text-right"><button class="text-brand-600 font-medium hover:underline">Edit</button> <button class="text-err-600 font-medium hover:underline ml-2">Deactivate</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: CONFIDENCE CONFIG -->
+<!-- ============================== -->
+<div id="pg-adminConfidence" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">Confidence Configuration</h2><p class="text-sm text-gray-500">Configure scoring logic per stage and per client</p></div>
+    <div class="flex gap-2">
+      <select class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none"><option>SiteOne Landscape Supply</option><option>The Home Depot</option></select>
+      <select class="text-xs bg-brand-50 border border-brand-200 text-brand-700 rounded-lg px-2.5 py-1.5 outline-none font-medium"><option>Preset: Balanced</option><option>Preset: Conservative</option><option>Preset: Aggressive</option></select>
+    </div>
+  </div>
+  <!-- Stage selector tabs -->
+  <div class="flex gap-1 mb-6 overflow-x-auto">
+    <button class="px-3 py-2 bg-brand-600 text-white text-xs font-medium rounded-lg whitespace-nowrap">Stage 1 — Ingestion</button>
+    <button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-600 rounded-lg whitespace-nowrap hover:bg-gray-50">Stage 2</button>
+    <button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-600 rounded-lg whitespace-nowrap hover:bg-gray-50">Stage 3</button>
+    <button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-600 rounded-lg whitespace-nowrap hover:bg-gray-50">Stage 4</button>
+    <button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-600 rounded-lg whitespace-nowrap hover:bg-gray-50">Stage 5</button>
+    <button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-600 rounded-lg whitespace-nowrap hover:bg-gray-50">Stage 6</button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Thresholds -->
+    <div class="config-card">
+      <h3 class="text-sm font-semibold text-gray-900 mb-4">Routing Thresholds</h3>
+      <div class="space-y-4">
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Auto-approve threshold</label><span class="text-xs font-bold text-ok-700">90</span></div><input type="range" min="50" max="100" value="90" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Needs review threshold</label><span class="text-xs font-bold text-warn-600">65</span></div><input type="range" min="30" max="95" value="65" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Low confidence (below this = red)</label><span class="text-xs font-bold text-err-600">65</span></div><input type="range" min="10" max="80" value="65" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+      </div>
+      <div class="mt-4 p-3 bg-brand-50 rounded-lg"><p class="text-[10px] text-brand-700"><strong>Preview:</strong> With these settings, 78% of fields from the last batch would be auto-approved, 18% need review, 4% flagged low confidence.</p></div>
+    </div>
+    <!-- Component weights -->
+    <div class="config-card">
+      <h3 class="text-sm font-semibold text-gray-900 mb-4">Component Weights</h3>
+      <div class="space-y-4">
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Source clarity</label><span class="text-xs font-bold">40%</span></div><input type="range" min="0" max="100" value="40" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Field match certainty</label><span class="text-xs font-bold">35%</span></div><input type="range" min="0" max="100" value="35" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Value completeness</label><span class="text-xs font-bold">25%</span></div><input type="range" min="0" max="100" value="25" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-3">Weights must sum to 100%</p>
+    </div>
+    <!-- Source reliability -->
+    <div class="config-card">
+      <h3 class="text-sm font-semibold text-gray-900 mb-4">Source Reliability Scores</h3>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">Human entry</span><input type="number" value="100" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">Iksula KB match</span><input type="number" value="95" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">PDF / OCR</span><input type="number" value="85" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">API Feed</span><input type="number" value="85" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">CSV / Supplier</span><input type="number" value="80" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">Image / Vision</span><input type="number" value="75" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">LLM inference</span><input type="number" value="65" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+        <div class="flex items-center justify-between"><span class="text-xs text-gray-600">Web lookup</span><input type="number" value="60" class="w-16 text-xs border border-gray-200 rounded px-2 py-1 text-right outline-none"></div>
+      </div>
+    </div>
+    <!-- Multi-source settings -->
+    <div class="config-card">
+      <h3 class="text-sm font-semibold text-gray-900 mb-4">Multi-Source Reconciliation</h3>
+      <div class="space-y-4">
+        <div><div class="flex justify-between mb-1"><label class="text-xs text-gray-600">Agreement bonus</label><span class="text-xs font-bold">+10</span></div><input type="range" min="0" max="20" value="10" class="w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer accent-brand-600"></div>
+        <div><label class="text-xs text-gray-600 block mb-1">Conflict resolution strategy</label><select class="w-full text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none"><option>Highest reliability source wins</option><option>Most recent source wins</option><option>Always route to HIL</option></select></div>
+        <label class="flex items-center gap-2"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-brand-600" checked><span class="text-xs text-gray-600">Flag conflicts for human review</span></label>
+      </div>
+    </div>
+  </div>
+  <!-- Save -->
+  <div class="mt-6 flex gap-3"><button class="px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg hover:bg-brand-700">Save Configuration</button><button class="px-4 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-700 rounded-lg hover:bg-gray-50">Reset to Defaults</button></div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: MODEL REGISTRY -->
+<!-- ============================== -->
+<div id="pg-adminModels" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">Model Registry</h2><p class="text-sm text-gray-500">Manage AI/ML models — Iksula, third-party, and client-provided</p></div><button class="px-3 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg">+ Register Model</button></div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="config-card"><div class="flex items-center justify-between mb-3"><h4 class="text-xs font-semibold text-gray-900">Iksula OCR Engine v2</h4><span class="w-2 h-2 rounded-full bg-ok-500"></span></div><div class="space-y-1 text-[10px] text-gray-500"><p>Type: <span class="font-medium text-gray-700">OCR</span></p><p>Provider: <span class="font-medium text-gray-700">Iksula</span></p><p>Default for: <span class="font-medium text-gray-700">Stage 1 — PDF extraction</span></p><p>Latency: <span class="font-medium text-gray-700">~1.2s avg</span></p></div><div class="mt-3 flex gap-2"><button class="text-[10px] text-brand-600 font-medium hover:underline">Configure</button><button class="text-[10px] text-gray-500 hover:underline">Test</button></div></div>
+    <div class="config-card"><div class="flex items-center justify-between mb-3"><h4 class="text-xs font-semibold text-gray-900">GPT-4o</h4><span class="w-2 h-2 rounded-full bg-ok-500"></span></div><div class="space-y-1 text-[10px] text-gray-500"><p>Type: <span class="font-medium text-gray-700">LLM</span></p><p>Provider: <span class="font-medium text-gray-700">OpenAI</span></p><p>Default for: <span class="font-medium text-gray-700">Copy generation, inference</span></p><p>Latency: <span class="font-medium text-gray-700">~1.5s avg</span></p></div><div class="mt-3 flex gap-2"><button class="text-[10px] text-brand-600 font-medium hover:underline">Configure</button><button class="text-[10px] text-gray-500 hover:underline">Test</button></div></div>
+    <div class="config-card"><div class="flex items-center justify-between mb-3"><h4 class="text-xs font-semibold text-gray-900">Iksula Vision v1.2</h4><span class="w-2 h-2 rounded-full bg-ok-500"></span></div><div class="space-y-1 text-[10px] text-gray-500"><p>Type: <span class="font-medium text-gray-700">Vision</span></p><p>Provider: <span class="font-medium text-gray-700">Iksula</span></p><p>Default for: <span class="font-medium text-gray-700">Image analysis, label reading</span></p><p>Latency: <span class="font-medium text-gray-700">~2.0s avg</span></p></div><div class="mt-3 flex gap-2"><button class="text-[10px] text-brand-600 font-medium hover:underline">Configure</button><button class="text-[10px] text-gray-500 hover:underline">Test</button></div></div>
+    <div class="config-card"><div class="flex items-center justify-between mb-3"><h4 class="text-xs font-semibold text-gray-900">Iksula KB v3.1</h4><span class="w-2 h-2 rounded-full bg-ok-500"></span></div><div class="space-y-1 text-[10px] text-gray-500"><p>Type: <span class="font-medium text-gray-700">Knowledge Base</span></p><p>Provider: <span class="font-medium text-gray-700">Iksula</span></p><p>Default for: <span class="font-medium text-gray-700">Attribute lookup, picklist match</span></p><p>Entries: <span class="font-medium text-gray-700">2.4M attributes</span></p></div><div class="mt-3 flex gap-2"><button class="text-[10px] text-brand-600 font-medium hover:underline">Configure</button><button class="text-[10px] text-gray-500 hover:underline">Browse KB</button></div></div>
+    <div class="config-card"><div class="flex items-center justify-between mb-3"><h4 class="text-xs font-semibold text-gray-900">Iksula Dedup v1.0</h4><span class="w-2 h-2 rounded-full bg-ok-500"></span></div><div class="space-y-1 text-[10px] text-gray-500"><p>Type: <span class="font-medium text-gray-700">Classification</span></p><p>Provider: <span class="font-medium text-gray-700">Iksula</span></p><p>Default for: <span class="font-medium text-gray-700">Stage 3 — deduplication</span></p><p>Trained on: <span class="font-medium text-gray-700">12M retail pairs</span></p></div><div class="mt-3 flex gap-2"><button class="text-[10px] text-brand-600 font-medium hover:underline">Configure</button><button class="text-[10px] text-gray-500 hover:underline">Test</button></div></div>
+    <div class="config-card border-dashed border-2 border-gray-300 flex items-center justify-center min-h-[140px] cursor-pointer hover:border-brand-400 hover:bg-brand-50/30">
+      <div class="text-center"><svg class="w-8 h-8 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/></svg><p class="text-xs font-medium text-gray-500">Register Client Model</p><p class="text-[10px] text-gray-400">Add your own OCR, LLM, or ML model</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: TEMPLATES -->
+<!-- ============================== -->
+<div id="pg-adminTemplates" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">Retailer Templates</h2><p class="text-sm text-gray-500">Manage output templates for each retailer</p></div><button class="px-3 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg">+ Create Template</button></div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="config-card"><div class="flex items-center justify-between mb-2"><h4 class="text-sm font-semibold text-gray-900">SiteOne Template v2.4</h4><span class="px-2 py-0.5 bg-ok-100 text-ok-700 text-[10px] font-medium rounded">Active</span></div><div class="space-y-1 text-[10px] text-gray-500 mb-3"><p>Maintained by: <span class="font-medium text-gray-700">Iksula</span></p><p>Last updated: <span class="font-medium text-gray-700">Jan 2026</span></p><p>Fields: <span class="font-medium text-gray-700">48 mapped (32 mandatory, 16 optional)</span></p><p>Export formats: <span class="font-medium text-gray-700">CSV, JSON, PIM-ready</span></p></div><div class="flex gap-2"><button class="text-xs text-brand-600 font-medium hover:underline">Edit Mappings</button><button class="text-xs text-gray-500 hover:underline">Preview</button><button class="text-xs text-gray-500 hover:underline">Export Schema</button></div></div>
+    <div class="config-card"><div class="flex items-center justify-between mb-2"><h4 class="text-sm font-semibold text-gray-900">THD Template v6.1</h4><span class="px-2 py-0.5 bg-ok-100 text-ok-700 text-[10px] font-medium rounded">Active</span></div><div class="space-y-1 text-[10px] text-gray-500 mb-3"><p>Maintained by: <span class="font-medium text-gray-700">Iksula (certified)</span></p><p>Last updated: <span class="font-medium text-gray-700">Feb 2026</span></p><p>Fields: <span class="font-medium text-gray-700">62 mapped (45 mandatory, 17 optional)</span></p><p>Export formats: <span class="font-medium text-gray-700">CSV, XML, PIM-ready</span></p></div><div class="flex gap-2"><button class="text-xs text-brand-600 font-medium hover:underline">Edit Mappings</button><button class="text-xs text-gray-500 hover:underline">Preview</button><button class="text-xs text-gray-500 hover:underline">Export Schema</button></div></div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: PIPELINE CONFIG -->
+<!-- ============================== -->
+<div id="pg-adminPipeline" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">Pipeline Configuration</h2><p class="text-sm text-gray-500">Toggle stages and configure processing per client</p></div>
+    <select class="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 outline-none"><option>SiteOne Landscape Supply</option><option>The Home Depot</option></select>
+  </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h3 class="text-sm font-semibold text-gray-900 mb-4">Stage Configuration</h3>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">1</span><span class="text-xs font-medium">Ingestion</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-gray-400">Always enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-not-allowed"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">2</span><span class="text-xs font-medium">Categorisation</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-ok-600">Enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">3</span><span class="text-xs font-medium">Deduplication</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-ok-600">Enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">4</span><span class="text-xs font-medium">Enrichment</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-ok-600">Enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">5</span><span class="text-xs font-medium">DIM Validation</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-ok-600">Enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">6</span><span class="text-xs font-medium">Template Transformation</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-ok-600">Enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><span class="w-6 h-6 bg-brand-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">7</span><span class="text-xs font-medium">Review &amp; Publish</span></div><div class="flex items-center gap-2"><span class="text-[10px] text-gray-400">Always enabled</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-not-allowed"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div></div>
+    </div>
+    <div class="mt-6 flex gap-3"><button class="px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-lg">Save Pipeline</button><button class="px-4 py-2 bg-white border border-gray-200 text-xs font-medium text-gray-700 rounded-lg">+ Add Custom Stage</button></div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: AUDIT LOGS -->
+<!-- ============================== -->
+<div id="pg-adminAudit" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"><div><h2 class="text-xl font-bold text-gray-900">Audit Logs</h2><p class="text-sm text-gray-500">Complete trail of all actions and changes</p></div><button class="px-3 py-2 bg-white border border-gray-200 text-xs font-medium rounded-lg">Export Logs</button></div>
+  <div class="bg-white rounded-xl border border-gray-200">
+    <div class="px-4 py-3 border-b border-gray-100 flex flex-wrap gap-2">
+      <select class="text-xs bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none"><option>All actions</option><option>Field edits</option><option>Approvals</option><option>Config changes</option><option>User changes</option></select>
+      <select class="text-xs bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none"><option>All users</option><option>Abhishek K.</option><option>Sarah R.</option><option>System</option></select>
+      <input type="date" class="text-xs border border-gray-200 rounded px-2 py-1 outline-none">
+    </div>
+    <div class="divide-y divide-gray-50 text-xs">
+      <div class="px-4 py-3 flex items-start gap-3"><span class="text-[10px] text-gray-400 w-32 flex-shrink-0">Mar 22, 14:30</span><div class="flex-1"><span class="font-medium">Sarah R.</span> edited <span class="font-medium">App Name</span> on <span class="font-medium">Orbit B-0624W</span><p class="text-[10px] text-gray-400 mt-0.5">"Orbit B-hyve" → "Orbit B-hyve app" · Stage 7 · Reason: Incomplete name</p></div><span class="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px]">Edit</span></div>
+      <div class="px-4 py-3 flex items-start gap-3"><span class="text-[10px] text-gray-400 w-32 flex-shrink-0">Mar 22, 14:28</span><div class="flex-1"><span class="font-medium">Sarah R.</span> approved <span class="font-medium">Colour = Grey</span> on <span class="font-medium">Orbit B-0624W</span><p class="text-[10px] text-gray-400 mt-0.5">Confidence 72% · Stage 4</p></div><span class="px-1.5 py-0.5 bg-ok-50 text-ok-600 rounded text-[10px]">Approve</span></div>
+      <div class="px-4 py-3 flex items-start gap-3"><span class="text-[10px] text-gray-400 w-32 flex-shrink-0">Mar 22, 14:15</span><div class="flex-1"><span class="font-medium">Abhishek K.</span> changed confidence threshold<p class="text-[10px] text-gray-400 mt-0.5">Stage 1 auto-approve: 85 → 90 · Client: SiteOne</p></div><span class="px-1.5 py-0.5 bg-pur-50 text-pur-600 rounded text-[10px]">Config</span></div>
+      <div class="px-4 py-3 flex items-start gap-3"><span class="text-[10px] text-gray-400 w-32 flex-shrink-0">Mar 22, 13:00</span><div class="flex-1"><span class="font-medium">System</span> processed batch <span class="font-medium">Orbit_Q1_2026_Catalog.csv</span><p class="text-[10px] text-gray-400 mt-0.5">142 items · 33 complete, 109 remaining</p></div><span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px]">System</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================== -->
+<!-- ADMIN: DATA QUALITY (DQ) -->
+<!-- ============================== -->
+<div id="pg-adminDQ" class="page hidden fade-in p-4 lg:p-6 max-w-[1400px]">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div><h2 class="text-xl font-bold text-gray-900">Data Quality Integration</h2><p class="text-sm text-gray-500">Athena DQ connection — quality checks at every stage output</p></div>
+    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-ok-500"></span><span class="text-xs font-medium text-ok-700">Athena DQ Connected</span></div>
+  </div>
+  <!-- Connection config -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+    <h3 class="text-sm font-semibold text-gray-900 mb-4">DQ API Connection</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div><label class="text-xs text-gray-600 block mb-1">API Endpoint</label><input type="text" value="https://dq.iksula.com/api/v2/check" class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 outline-none"></div>
+      <div><label class="text-xs text-gray-600 block mb-1">Timeout (ms)</label><input type="number" value="5000" class="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 outline-none"></div>
+      <div><label class="text-xs text-gray-600 block mb-1">On timeout / unavailable</label><select class="w-full text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none"><option>Proceed with warning</option><option>Block and retry</option><option>Skip DQ for this stage</option></select></div>
+      <div><label class="text-xs text-gray-600 block mb-1">Block on DQ failure</label><select class="w-full text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none"><option>Yes — block until resolved or overridden</option><option>No — warn only</option></select></div>
+    </div>
+    <label class="flex items-center gap-2 mt-4"><input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300 text-brand-600" checked><span class="text-xs text-gray-600">Allow manual override of DQ failures (with reason)</span></label>
+  </div>
+  <!-- Per-stage DQ toggle -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+    <h3 class="text-sm font-semibold text-gray-900 mb-4">DQ Check Per Stage</h3>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 1 — Ingestion output</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 2 — Categorisation output</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 3 — Deduplication output</span><div class="w-9 h-5 bg-gray-300 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute left-0.5 top-0.5 shadow"></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 4 — Enrichment output</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 5 — Validation output</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 6 — Transformation output</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div>
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><span class="text-xs font-medium">Stage 7 — Pre-publish check</span><div class="w-9 h-5 bg-brand-600 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div></div>
+    </div>
+  </div>
+  <!-- DQ Stats -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6">
+    <h3 class="text-sm font-semibold text-gray-900 mb-4">DQ Check Statistics (Last 30 Days)</h3>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      <div class="text-center p-3 bg-ok-50 rounded-lg"><span class="text-xl font-bold text-ok-700">94.2%</span><p class="text-[10px] text-ok-600">Pass Rate</p></div>
+      <div class="text-center p-3 bg-warn-50 rounded-lg"><span class="text-xl font-bold text-warn-700">3.8%</span><p class="text-[10px] text-warn-600">Warnings</p></div>
+      <div class="text-center p-3 bg-err-50 rounded-lg"><span class="text-xl font-bold text-err-600">2.0%</span><p class="text-[10px] text-err-500">Failures</p></div>
+      <div class="text-center p-3 bg-blue-50 rounded-lg"><span class="text-xl font-bold text-brand-700">12</span><p class="text-[10px] text-brand-600">Overrides</p></div>
+    </div>
+    <h4 class="text-xs font-semibold text-gray-700 mb-2">Most Common DQ Failures</h4>
+    <div class="space-y-2">
+      <div class="flex items-center justify-between text-xs p-2 bg-gray-50 rounded"><span class="text-gray-700">Weight below category minimum</span><span class="font-medium text-err-600">8 occurrences</span></div>
+      <div class="flex items-center justify-between text-xs p-2 bg-gray-50 rounded"><span class="text-gray-700">Description exceeds character limit</span><span class="font-medium text-err-600">5 occurrences</span></div>
+      <div class="flex items-center justify-between text-xs p-2 bg-gray-50 rounded"><span class="text-gray-700">UPC checksum mismatch</span><span class="font-medium text-err-600">3 occurrences</span></div>
+    </div>
+    <div class="mt-4"><button class="text-xs text-brand-600 font-medium hover:underline">View full DQ report in Athena DQ →</button></div>
+  </div>
+</div>
+
+    </main>
+  </div>
+</div>
+</div><!-- end appShell -->
+
+<!-- ============================================================ -->
+<!-- TOAST -->
+<!-- ============================================================ -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+  <div class="toast-anim bg-gray-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2">
+    <svg class="w-4 h-4 text-ok-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toastMsg">Action completed</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+window.showScreen = function(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.add('hidden'); s.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if (el) { el.classList.remove('hidden'); el.classList.add('active'); }
+};
+
+window.initApp = function() {
+  window.navigateTo('dashboard');
+};
+
+window.navigateTo = function(pageId) {
+  console.log('navigateTo:', pageId);
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.add('hidden'); });
+  // Show target
+  var pg = document.getElementById('pg-' + pageId);
+  if (pg) {
+    pg.classList.remove('hidden');
+    pg.classList.add('fade-in');
+    console.log('Showing page:', 'pg-' + pageId);
+  } else {
+    console.log('Page not found:', 'pg-' + pageId);
+  }
+  // Update sidebar
+  document.querySelectorAll('.sidebar-link').forEach(function(l) { l.classList.remove('active'); });
+  var links = document.querySelectorAll('.sidebar-link');
+  var map = { dashboard:0, bulkUpload:1, itemPipeline:2, hilReview:3, published:4, adminUsers:5, adminConfidence:6, adminModels:7, adminTemplates:8, adminPipeline:9, adminAudit:10, adminDQ:11 };
+  if (map[pageId] !== undefined && links[map[pageId]]) links[map[pageId]].classList.add('active');
+  // Close mobile sidebar
+  var sb = document.querySelector('.sidebar');
+  if (sb) sb.classList.remove('mobile-open');
+  // Scroll to top
+  var m = document.querySelector('main');
+  if (m) m.scrollTo(0, 0);
+};
+
+window.showItemStage = function(n) {
+  window.showToast('Viewing Stage ' + n);
+};
+
+window.showToast = function(msg) {
+  var t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(function() { t.classList.add('hidden'); }, 3000);
+};
+
+// Auto-init: show dashboard on load
+window.addEventListener('load', function() {
+  console.log('PC2 loaded - initializing...');
+  window.initApp();
+});
+</script>
+</body>
+</html>

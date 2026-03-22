@@ -1,0 +1,62 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pc2
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/pc2
+      REDIS_URL: redis://redis:6379
+      DEMO_MODE: "true"
+      CORS_ORIGINS: "http://localhost:5173,http://localhost:3000"
+    volumes:
+      - ./backend:/app
+
+  celery-worker:
+    build: ./backend
+    command: celery -A app.tasks worker --loglevel=info
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/pc2
+      REDIS_URL: redis://redis:6379
+      DEMO_MODE: "true"
+    volumes:
+      - ./backend:/app
+
+volumes:
+  pgdata:
