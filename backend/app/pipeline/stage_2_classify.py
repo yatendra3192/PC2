@@ -28,15 +28,35 @@ class Stage2Classify(StageProcessor):
         auto_threshold = config.get("confidence", {}).get("auto_approve_threshold", DEFAULT_AUTO_APPROVE)
         hil_below = config.get("confidence", {}).get("require_human_confirm_below", DEFAULT_HIL_BELOW)
 
-        # Call classification model
-        result = await invoke_model("classify", {"product_id": product_id})
+        # Gather product data for classification
+        product = await fetch_one("SELECT * FROM products WHERE id = $1::uuid", product_id)
+        known_rows = await fetch_all(
+            """SELECT ica.attribute_code, piv.value_text, piv.value_numeric
+               FROM product_iksula_values piv
+               JOIN iksula_class_attributes ica ON piv.attribute_id = ica.id
+               WHERE piv.product_id = $1::uuid""",
+            product_id,
+        )
+        known_attributes = {}
+        for r in known_rows:
+            known_attributes[r["attribute_code"]] = r["value_text"] or (str(r["value_numeric"]) if r["value_numeric"] is not None else None)
+
+        result = await invoke_model("classify", {
+            "product_id": product_id,
+            "product_name": product["product_name"] or "",
+            "model_number": product["model_number"] or "",
+            "known_attributes": known_attributes,
+        })
         classification = result.value  # {department, category, class, subclass}
+        if not isinstance(classification, dict) or "subclass" not in classification:
+            logger.warning(f"Classification returned unexpected format: {classification}")
+            return StageResult(stage=2, status="failed", metadata={"error": "Classification failed"})
 
         fields = []
         lowest_confidence = 100
 
         # Find the matching taxonomy node (subclass level)
-        subclass_code = classification["subclass"]["code"]
+        subclass_code = classification["subclass"].get("code", "")
         taxonomy_node = await fetch_one(
             "SELECT id FROM taxonomy_nodes WHERE code = $1", subclass_code,
         )
@@ -97,12 +117,9 @@ class Stage2Classify(StageProcessor):
         needs_hil = lowest_confidence < hil_below
         overall_status = "needs_review" if needs_hil else "complete"
 
-        # Build top 3 alternatives (for HIL)
-        alternatives = [
-            {"path": "Hardware & Tools > Irrigation > Controllers > Smart Controllers", "confidence": classification["subclass"]["confidence"]},
-            {"path": "Hardware & Tools > Irrigation > Timers > Digital Timers", "confidence": 67},
-            {"path": "Hardware & Tools > Irrigation > Controllers > Basic Controllers", "confidence": 52},
-        ]
+        # Build alternatives from classification result
+        path = " > ".join([classification.get(l, {}).get("name", "?") for l in ["department", "category", "class", "subclass"]])
+        alternatives = [{"path": path, "confidence": lowest_confidence}]
 
         found_count = sum(1 for a in mandatory_attrs if a["found"])
         total_mandatory = len(mandatory_attrs)

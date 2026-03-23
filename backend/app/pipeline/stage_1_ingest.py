@@ -51,13 +51,25 @@ class Stage1Ingest(StageProcessor):
                    FROM iksula_class_attributes ORDER BY attribute_code, display_order""",
             )
 
-        # Pass target attributes to the AI model so it knows what fields to extract
-        # In production, this guides the LLM prompt: "Extract these specific fields: voltage (V), zones (int)..."
+        # Gather raw content from uploaded file (stored during batch upload)
+        raw_values = await fetch_all(
+            "SELECT supplier_field_name, raw_value FROM product_raw_values WHERE product_id = $1::uuid",
+            product_id,
+        )
+        content_parts = [f"{rv['supplier_field_name']}: {rv['raw_value']}" for rv in raw_values if rv['raw_value']]
+        content_str = "\n".join(content_parts) if content_parts else (product["product_name"] or "No content")
+
+        # Pass target attributes + content to the AI model
         extraction = await invoke_model("extract_fields", {
             "product_id": product_id,
+            "content": content_str,
+            "product_name": product.get("product_name", ""),
             "target_attributes": [dict(a) for a in target_attributes] if target_attributes else [],
         })
         fields_data = extraction.value  # Dict of field_name -> {value, confidence, page}
+        if not isinstance(fields_data, dict):
+            logger.warning(f"Extraction returned non-dict: {type(fields_data)}, using empty")
+            fields_data = {}
 
         # Store extracted fields
         result_fields = []
@@ -149,12 +161,19 @@ class Stage1Ingest(StageProcessor):
             ))
 
         # Add blank fields that were NOT found (will enrich in Stage 4)
-        all_attrs = await fetch_all(
-            """SELECT attribute_code, attribute_name, is_mandatory
-               FROM iksula_class_attributes
-               WHERE taxonomy_node_id = '33333333-3333-3333-3333-444444444444'
-               ORDER BY display_order""",
-        )
+        # Re-read taxonomy_node_id in case it was updated
+        product_updated = await fetch_one("SELECT taxonomy_node_id FROM products WHERE id = $1::uuid", product_id)
+        tn_id = str(product_updated["taxonomy_node_id"]) if product_updated and product_updated["taxonomy_node_id"] else None
+        if tn_id:
+            all_attrs = await fetch_all(
+                """SELECT attribute_code, attribute_name, is_mandatory
+                   FROM iksula_class_attributes
+                   WHERE taxonomy_node_id = $1::uuid
+                   ORDER BY display_order""",
+                tn_id,
+            )
+        else:
+            all_attrs = []
         found_codes = set(fields_data.keys())
         for attr in all_attrs:
             if attr["attribute_code"] not in found_codes:

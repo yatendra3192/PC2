@@ -51,7 +51,7 @@ def _get_anthropic():
 
 
 # Task → adapter routing
-LLM_TASKS = {"extract_fields", "classify", "enrich", "generate_copy", "dedup"}
+LLM_TASKS = {"extract_fields", "classify", "enrich", "generate_copy", "dedup", "validate_dims", "map_template"}
 EMBEDDING_TASKS = {"generate_embedding"}
 VISION_TASKS = {"analyze_image", "read_label"}
 MOCK_ONLY_TASKS = {"web_scrape"}  # Web scraping uses scraper module, not AI adapter

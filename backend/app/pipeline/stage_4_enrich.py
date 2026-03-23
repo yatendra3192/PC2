@@ -67,14 +67,36 @@ class Stage4Enrich(StageProcessor):
         # Find missing attributes
         missing_attrs = [a for a in all_attrs if str(a["id"]) not in existing_attr_ids]
 
+        # Build known attributes dict for context
+        existing_vals = await fetch_all(
+            """SELECT ica.attribute_code, piv.value_text, piv.value_numeric
+               FROM product_iksula_values piv
+               JOIN iksula_class_attributes ica ON piv.attribute_id = ica.id
+               WHERE piv.product_id = $1::uuid""",
+            product_id,
+        )
+        known_attributes = {}
+        for r in existing_vals:
+            known_attributes[r["attribute_code"]] = r["value_text"] or (str(r["value_numeric"]) if r["value_numeric"] is not None else None)
+
         # ── ENRICHMENT: Call 4 sources ──
 
-        # Source 1 & 2: KB + LLM (returned together from mock)
+        # Source 1 & 2: KB + LLM
         enrich_result = await invoke_model("enrich", {
             "product_id": product_id,
-            "missing_attributes": [a["attribute_code"] for a in missing_attrs],
+            "product_name": product["product_name"] or "",
+            "model_number": product["model_number"] or "",
+            "known_attributes": known_attributes,
+            "missing_attributes": [
+                {"attribute_code": a["attribute_code"], "attribute_name": a["attribute_name"],
+                 "data_type": a["data_type"], "unit": a.get("unit")}
+                for a in missing_attrs
+            ],
         })
         enriched_fields = enrich_result.value  # Dict of attr_code -> {value, source, confidence, model, ...}
+        if not isinstance(enriched_fields, dict):
+            logger.warning(f"Enrichment returned non-dict: {type(enriched_fields)}, using empty")
+            enriched_fields = {}
 
         # Source 3 & 4: Web scrape (Google + Amazon)
         scrape_result = await invoke_model("web_scrape", {

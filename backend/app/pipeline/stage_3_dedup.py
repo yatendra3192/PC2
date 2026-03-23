@@ -78,13 +78,22 @@ class Stage3Dedup(StageProcessor):
         # ORDER BY pe.embedding <=> $1
         # LIMIT 5;
 
-        # Call dedup model (in demo mode, returns hardcoded match)
+        # Call dedup model with product data for comparison
         result = await invoke_model("dedup", {
             "product_id": product_id,
+            "product_name": product["product_name"] or "",
+            "model_number": product["model_number"] or "",
+            "sku": product["sku"],
+            "brand": product.get("brand", ""),
             "exact_match": str(exact_match_row["id"]) if exact_match_row else None,
+            "exact_match_name": exact_match_row["product_name"] if exact_match_row else None,
+            "exact_match_model": exact_match_row["model_number"] if exact_match_row else None,
             "taxonomy_node_id": str(product["taxonomy_node_id"]) if product["taxonomy_node_id"] else None,
         })
         dedup = result.value
+        if not isinstance(dedup, dict):
+            logger.warning(f"Dedup returned non-dict: {type(dedup)}, treating as new item")
+            dedup = {"match_found": False, "similarity": 0}
 
         similarity = dedup.get("similarity", 0)
         match_found = dedup.get("match_found", False)

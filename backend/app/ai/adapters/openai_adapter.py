@@ -34,6 +34,8 @@ class OpenAIAdapter(ModelAdapter):
             result = await self._enrich(input)
         elif input.task == "generate_copy":
             result = await self._generate_copy(input)
+        elif input.task == "dedup":
+            result = await self._dedup(input)
         elif input.task == "generate_embedding":
             result = await self._generate_embedding(input)
         else:
@@ -170,6 +172,50 @@ Return JSON:
             model_name=f"GPT-4o ({settings.openai_model})",
             confidence=90,
             metadata={"prompt_template": "GPT-4o Copy Generation"},
+        )
+
+    async def _dedup(self, input: ModelInput) -> ModelOutput:
+        """Compare incoming product against potential duplicate."""
+        incoming = f"Product: {input.data.get('product_name', '')}, Model: {input.data.get('model_number', '')}"
+        exact_match = input.data.get('exact_match')
+
+        if exact_match:
+            match_info = f"Candidate match: {input.data.get('exact_match_name', '')}, Model: {input.data.get('exact_match_model', '')}"
+        else:
+            match_info = "No exact ID match found in the catalog."
+
+        prompt = f"""You are a product deduplication engine for a retail catalog.
+
+Compare the incoming product against the candidate match (if any) and determine:
+1. Are these the same product (duplicate)?
+2. Are these variants of the same product (e.g., different size/color)?
+3. Are these completely different products?
+
+Incoming product:
+{incoming}
+SKU: {input.data.get('sku', 'N/A')}
+Brand: {input.data.get('brand', 'N/A')}
+
+{match_info}
+
+Return JSON:
+{{
+  "match_found": true/false,
+  "match_type": "likely_duplicate" or "possible_variant" or "new_item",
+  "similarity": 0-100,
+  "matched_product_id": null,
+  "key_differences": {{}}
+}}
+
+If no candidate match exists, return match_found=false, similarity=0, match_type="new_item"."""
+
+        response = await self._chat_completion(prompt, response_format="json_object")
+        if isinstance(response, dict) and exact_match:
+            response["matched_product_id"] = exact_match
+        return ModelOutput(
+            value=response,
+            model_name=f"GPT-4o ({settings.openai_model})",
+            confidence=response.get("similarity", 0) if isinstance(response, dict) else 50,
         )
 
     async def _generate_embedding(self, input: ModelInput) -> ModelOutput:
