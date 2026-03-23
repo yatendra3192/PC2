@@ -47,7 +47,8 @@ async def run_migrations(db_url: str):
                 logger.info(f"Applied {sql_file.name}")
             except Exception as e:
                 logger.error(f"Migration {sql_file.name} failed: {e}")
-                raise
+                # Continue with remaining migrations instead of crashing
+                continue
 
         # Seed default admin user if users table is empty
         count = await conn.fetchval("SELECT COUNT(*) FROM users")

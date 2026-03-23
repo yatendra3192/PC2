@@ -18,6 +18,5 @@ DROP INDEX IF EXISTS idx_embed_vector;
 CREATE INDEX idx_embed_vector ON product_embeddings
   USING ivfflat (embedding vector_cosine_ops) WITH (lists = 500);
 
--- Partial index: only index published product embeddings
-CREATE INDEX IF NOT EXISTS idx_embed_published ON product_embeddings(product_id)
-  WHERE product_id IN (SELECT id FROM products WHERE status = 'published');
+-- Index for fast embedding lookup by product
+CREATE INDEX IF NOT EXISTS idx_embed_product ON product_embeddings(product_id);
