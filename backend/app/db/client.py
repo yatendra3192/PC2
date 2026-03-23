@@ -1,14 +1,27 @@
 from __future__ import annotations
+import asyncio
+import logging
 import asyncpg
 from contextlib import asynccontextmanager
 from app.config import settings
+
+logger = logging.getLogger("pc2")
 
 pool: asyncpg.Pool | None = None
 
 
 async def init_db():
     global pool
-    pool = await asyncpg.create_pool(settings.database_url, min_size=2, max_size=10)
+    for attempt in range(5):
+        try:
+            pool = await asyncpg.create_pool(settings.database_url, min_size=2, max_size=10)
+            logger.info("Database connected successfully")
+            return
+        except Exception as e:
+            logger.warning(f"DB connection attempt {attempt + 1}/5 failed: {e}")
+            if attempt < 4:
+                await asyncio.sleep(2)
+    logger.error("Could not connect to database after 5 attempts")
 
 
 async def close_db():

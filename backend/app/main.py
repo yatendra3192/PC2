@@ -13,7 +13,11 @@ from app.db.client import init_db, close_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
+    try:
+        await init_db()
+    except Exception as e:
+        import logging
+        logging.getLogger("pc2").error(f"Database init failed: {e}")
     yield
     await close_db()
 
