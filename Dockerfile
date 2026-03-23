@@ -30,4 +30,4 @@ COPY --from=frontend-build /app/dist ./static
 ENV PORT=8000
 EXPOSE ${PORT}
 
-CMD sh -c "python migrate.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level info"
+CMD sh -c "python migrate.py; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level info"

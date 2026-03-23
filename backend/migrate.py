@@ -51,23 +51,26 @@ async def run_migrations(db_url: str):
                 continue
 
         # Seed default admin user if users table is empty
-        count = await conn.fetchval("SELECT COUNT(*) FROM users")
-        if count == 0:
-            logger.info("Seeding default admin user...")
-            from passlib.context import CryptContext
-            pwd = CryptContext(schemes=["bcrypt"]).hash("admin123")
-            # Create default client first
-            client_id = await conn.fetchval("""
-                INSERT INTO clients (name, code) VALUES ('Default', 'default')
-                ON CONFLICT (code) DO UPDATE SET name='Default'
-                RETURNING id
-            """)
-            await conn.execute("""
-                INSERT INTO users (email, password_hash, full_name, role, client_id)
-                VALUES ('admin@iksula.com', $1, 'Admin', 'admin', $2)
-                ON CONFLICT (email) DO NOTHING
-            """, pwd, client_id)
-            logger.info("Default admin created: admin@iksula.com / admin123")
+        try:
+            count = await conn.fetchval("SELECT COUNT(*) FROM users")
+            if count == 0:
+                logger.info("Seeding default admin user...")
+                import bcrypt
+                pwd = bcrypt.hashpw("admin123".encode(), bcrypt.gensalt()).decode()
+                # Create default client first
+                client_id = await conn.fetchval("""
+                    INSERT INTO clients (name, code) VALUES ('Default', 'default')
+                    ON CONFLICT (code) DO UPDATE SET name='Default'
+                    RETURNING id
+                """)
+                await conn.execute("""
+                    INSERT INTO users (email, password_hash, full_name, role, client_id)
+                    VALUES ('admin@iksula.com', $1, 'Admin', 'admin', $2)
+                    ON CONFLICT (email) DO NOTHING
+                """, pwd, client_id)
+                logger.info("Default admin created: admin@iksula.com / admin123")
+        except Exception as e:
+            logger.error(f"Seeding failed: {e}")
     finally:
         await conn.close()
 
@@ -75,4 +78,8 @@ async def run_migrations(db_url: str):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     db_url = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres@localhost:54322/postgres")
-    asyncio.run(run_migrations(db_url))
+    try:
+        asyncio.run(run_migrations(db_url))
+    except Exception as e:
+        logger.error(f"Migration script failed: {e}")
+        # Don't crash — let the app start anyway
