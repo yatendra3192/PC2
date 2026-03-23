@@ -124,7 +124,17 @@ async def get_product(product_id: str, user: TokenPayload = Depends(get_current_
 
 @router.post("/{product_id}/advance")
 async def advance_product(product_id: str, user: TokenPayload = Depends(require_reviewer)):
-    """Approve current stage and advance to next."""
+    """Approve current stage, advance to next, and run the pipeline from there."""
+    # Ensure all stage processors are registered
+    import app.pipeline.stage_1_ingest  # noqa: F401
+    import app.pipeline.stage_2_classify  # noqa: F401
+    import app.pipeline.stage_3_dedup  # noqa: F401
+    import app.pipeline.stage_4_enrich  # noqa: F401
+    import app.pipeline.stage_5_validate  # noqa: F401
+    import app.pipeline.stage_6_transform  # noqa: F401
+    import app.pipeline.stage_7_review  # noqa: F401
+    from app.pipeline.orchestrator import run_pipeline
+
     product = await fetch_one("SELECT * FROM products WHERE id = $1::uuid", product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -144,12 +154,26 @@ async def advance_product(product_id: str, user: TokenPayload = Depends(require_
         product_id, current,
     )
 
+    # Advance to next stage
     await execute(
         "UPDATE products SET current_stage = $1, status = 'processing', updated_at = now() WHERE id = $2::uuid",
         next_stage, product_id,
     )
 
-    return {"product_id": product_id, "advanced_to": next_stage}
+    # Run the pipeline from the next stage (will continue until review needed or complete)
+    try:
+        await run_pipeline(product_id)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Pipeline error after advance: {e}")
+
+    # Get updated product state
+    updated = await fetch_one("SELECT current_stage, status FROM products WHERE id = $1::uuid", product_id)
+    return {
+        "product_id": product_id,
+        "advanced_to": updated["current_stage"] if updated else next_stage,
+        "status": updated["status"] if updated else "processing",
+    }
 
 
 @router.post("/{product_id}/approve-all")
