@@ -50,25 +50,24 @@ async def run_migrations(db_url: str):
                 # Continue with remaining migrations instead of crashing
                 continue
 
-        # Seed default admin user if users table is empty
+        # Ensure admin user exists with correct password
         try:
-            count = await conn.fetchval("SELECT COUNT(*) FROM users")
-            if count == 0:
-                logger.info("Seeding default admin user...")
-                import bcrypt
-                pwd = bcrypt.hashpw("admin123".encode(), bcrypt.gensalt()).decode()
-                # Create default client first
-                client_id = await conn.fetchval("""
-                    INSERT INTO clients (name, code) VALUES ('Default', 'default')
-                    ON CONFLICT (code) DO UPDATE SET name='Default'
-                    RETURNING id
-                """)
-                await conn.execute("""
-                    INSERT INTO users (email, password_hash, full_name, role, client_id)
-                    VALUES ('admin@iksula.com', $1, 'Admin', 'admin', $2)
-                    ON CONFLICT (email) DO NOTHING
-                """, pwd, client_id)
-                logger.info("Default admin created: admin@iksula.com / admin123")
+            import bcrypt
+            pwd = bcrypt.hashpw("admin123".encode(), bcrypt.gensalt()).decode()
+            logger.info("Ensuring admin user exists...")
+            # Create default client first
+            client_id = await conn.fetchval("""
+                INSERT INTO clients (name, code) VALUES ('Default', 'default')
+                ON CONFLICT (code) DO UPDATE SET name='Default'
+                RETURNING id
+            """)
+            # Upsert admin — reset password if it already exists
+            await conn.execute("""
+                INSERT INTO users (email, password_hash, full_name, role, client_id)
+                VALUES ('admin@iksula.com', $1, 'Admin', 'admin', $2)
+                ON CONFLICT (email) DO UPDATE SET password_hash = $1
+            """, pwd, client_id)
+            logger.info("Admin user ready: admin@iksula.com / admin123")
         except Exception as e:
             logger.error(f"Seeding failed: {e}")
     finally:
