@@ -12,9 +12,14 @@ pool: asyncpg.Pool | None = None
 
 async def init_db():
     global pool
+    db_url = settings.database_url
+    # Railway may provide postgres:// but asyncpg needs postgresql://
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    logger.info(f"Connecting to database at {db_url[:20]}...")
     for attempt in range(5):
         try:
-            pool = await asyncpg.create_pool(settings.database_url, min_size=2, max_size=10)
+            pool = await asyncpg.create_pool(db_url, min_size=2, max_size=10)
             logger.info("Database connected successfully")
             return
         except Exception as e:

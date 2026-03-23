@@ -107,8 +107,12 @@ async def health_check():
 
 # Serve frontend static files (built React app)
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+logger.info(f"Static dir: {STATIC_DIR}, exists: {STATIC_DIR.is_dir()}")
+
 if STATIC_DIR.is_dir():
-    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+    assets_dir = STATIC_DIR / "assets"
+    if assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
