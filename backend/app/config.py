@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     # App
     demo_mode: bool = False                        # False = use real AI models
     secret_key: str = "dev-secret-key-change-in-production"
-    cors_origins: str = "http://localhost:5173"
+    cors_origins: str = "http://localhost:5173,http://localhost:3000,https://*.up.railway.app"
 
     class Config:
         env_file = ".env"

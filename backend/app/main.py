@@ -40,9 +40,14 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal server error", "type": type(exc).__name__},
     )
 
+cors_origins = [o.strip() for o in settings.cors_origins.split(",")]
+# Railway wildcard support
+if any("*" in o for o in cors_origins):
+    cors_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins.split(","),
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
