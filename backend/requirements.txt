@@ -14,3 +14,4 @@ beautifulsoup4==4.12.3
 playwright==1.49.1
 pypdf==5.1.0
 openpyxl==3.1.5
+aiofiles==24.1.0
