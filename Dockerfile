@@ -30,4 +30,4 @@ RUN python -c "import app.config; print('Config OK')" || true
 ENV PORT=8000
 EXPOSE ${PORT}
 
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
+CMD sh -c "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level info"
